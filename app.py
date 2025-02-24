@@ -1,12 +1,41 @@
 import streamlit as st
-from PIL import Image
+import pandas as pd
 
-# Título de la aplicación
-st.title("Mi Aplicación Streamlit Básica")
 
-st.write("Nombre: Hadith")
-st.write("Matrícula: 123456789")
-st.write("Correo: hadith024@gmail.com")
+st.title("DASHBOARD")
+st.header("Streamlit App")
 
-image = Image.open("thw.png")
-st.image(image, caption="Credencial", use_column_width=True)
+
+def bienvenido(name):
+    return f"Bienvenido, {name}!"
+
+
+@st.cache_data
+def load_data(nrows=1000):
+    file_path = "dataset.csv"
+    return pd.read_csv(file_path, nrows=nrows)
+
+
+name = st.text_input("Nombre:")
+if name:
+    st.write(bienvenido(name))
+
+
+data = load_data()
+
+
+st.subheader("Datos Originales")
+st.dataframe(data)
+
+selected_sex = st.selectbox("Selecciona el sexo:", data["sex"].unique())
+
+
+filtered_data = data[data["sex"] == selected_sex]
+
+
+st.subheader(f"Datos filtrados por sexo: {selected_sex}")
+st.dataframe(filtered_data)
+
+
+st.subheader("Resumen de datos filtrados")
+st.write(filtered_data.describe())
